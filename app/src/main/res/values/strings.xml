@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Basic Calculator</string>
+    <string name="enter_second_no">Enter Second no.</string>
+    <string name="enter_first_no">Enter first no.</string>
+    <string name="plus">"\u002b"</string>
+    <string name="minus">"\u2212"</string>
+    <string name="multiply">"\u00d7"</string>
+    <string name="divide">"\u00f7"</string>
+    <string name="percentage">%</string>
+    <string name="clear">C</string>
+    <string name="delete">"\u232b"</string>
+    <string name="zero">0</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="point">.</string>
+    <string name="equals">"\u003d"</string>
+    <string name="more">more</string>
+
+    <string name="calcicon">calcicon</string>
+    <string name="sign">Shiv</string>
+
+</resources>
