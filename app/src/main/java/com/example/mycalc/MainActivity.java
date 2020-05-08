@@ -5,14 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView input, answer;
+    TextView input; //=findViewById(R.id.tVInput);
+    TextView answer; //=findViewById(R.id.tVAnswer);
     Button add, subtract, multiply, divide,percent;
     Button clear, delete,equals;
     Button zero, one, two, three, four, five, six, seven, eight, nine, point, more;
@@ -20,44 +20,124 @@ public class MainActivity extends AppCompatActivity {
     //to decide what operation is to be performed
     int operatorCount=0;
     String operator="";
-    String firstVal="0";
-    String secondVal="";
+    StringBuilder firstVal=new StringBuilder("0");
+    StringBuilder secondVal=new StringBuilder();
     boolean enter=false;
     float result=0;
+    
+    //Getting string values from input and answer TextView
+    public String getString(TextView tv){
+        return tv.getText().toString();
+    }
+
+
+    //Defining the component classes which will perform the actions
+    //Operation operate=new Operation();
 
     //Operation based on operator:
-    public float operation(String operator, String firstVal, String secondVal){
+    public float operation(String operator, StringBuilder firstVal, StringBuilder secondVal){
         try{
-            if (operator.equals("a")){
-                return (Float.parseFloat(firstVal)+Float.parseFloat(secondVal));
-            }
-            if (operator.equals("s")){
-                return (Float.parseFloat(firstVal)-Float.parseFloat(secondVal));
-            }
-            if (operator.equals("m")){
-                return (Float.parseFloat(firstVal)*Float.parseFloat(secondVal));
-            }
-            if (operator.equals("d")){
-                return (Float.parseFloat(firstVal)/Float.parseFloat(secondVal));
-            }
-            else {
-                return Float.parseFloat(firstVal);
+            switch (operator) {
+                case "a":
+                    return (Float.parseFloat(firstVal.toString()) + Float.parseFloat(secondVal.toString()));
+                case "s":
+                    return (Float.parseFloat(firstVal.toString()) - Float.parseFloat(secondVal.toString()));
+                case "m":
+                    return (Float.parseFloat(firstVal.toString()) * Float.parseFloat(secondVal.toString()));
+                case "d":
+                    return (Float.parseFloat(firstVal.toString()) / Float.parseFloat(secondVal.toString()));
+                default:
+                    return Float.parseFloat(firstVal.toString());
             }
         }
         catch (Exception e){
-            return Float.parseFloat(firstVal);
+            return Float.parseFloat(firstVal.toString());
         }
 
 
     }
 
+    //Setter function to set value 0,1,2...based on respective button
+    public void setValue(String val){
+
+        if(!operator.equals("")){
+            if (!secondVal.toString().equals("0")) {
+                secondVal.append(val);
+                input.setText(getString(input)+val);
+            }
+            else{
+                secondVal.setLength(0);
+                secondVal.append(val);
+                int length=getString(input).length();
+                input.setText(getString(input).substring(0,length-1)+val);
+            }
+
+            result=operation(operator,firstVal,secondVal);
+            answer.setText("=" + Float.toString(result));
+        }
+        else {
+            if (enter){
+                clear.performClick();
+            }
+            if (!firstVal.toString().equals("0")) {
+                firstVal.append(val);
+                input.setText(getString(input) + val);
+            }
+            else{
+                firstVal.setLength(0);
+                firstVal.append(val);
+                int length=getString(input).length();
+                if(length>0){
+                    input.setText(getString(input).substring(0,length-1)+val);
+                }
+                else{
+                    input.setText(val);
+                }
+            }
+            answer.setText("="+firstVal.toString());
+            enter = false;
+        }
+    }
+
+    public void arithmeticOperator(String op){
+        String sign = null;
+        switch (op) {
+            case "a":
+                sign = "\u002b";
+                break;
+            case "s":
+                sign = "\u2212";
+                break;
+            case "m":
+                sign = "\u00d7";
+                break;
+            case "d":
+                sign = "\u00f7";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
+        }
+
+
+        if(getString(input).matches(".*[\\u002b\\u2212\\u00d7\\u00f7]$")) {
+
+            int length=getString(input).length();
+            input.setText(getString(input).substring(0,length-1) + sign);
+
+        }
+        else {
+            input.setText(getString(input) + sign);
+            secondVal.setLength(0);
+            if (operatorCount!=0){
+                firstVal.setLength(0);
+                firstVal.append(Float.toString(result));
+            }
+            operatorCount+=1;
+        }
+    }
+
     //It helps in handling decimal values
     //DecimalFormat df=new DecimalFormat("#.##");
-    //1-
-    //2+3+
-    //4+23*
-    //5/
-    //6%
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Views binding to their Ids:
+
         input =findViewById(R.id.tVInput);
         answer =findViewById(R.id.tVAnswer);
         clear =findViewById(R.id.btClear);
@@ -98,21 +179,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 operator="a";
+                arithmeticOperator(operator);
 
-                if(input.getText().toString().matches(".*[\\u002b\\u2212\\u00d7\\u00f7]$")) {
-
-                    int length=input.getText().toString().length();
-                    input.setText(input.getText().toString().substring(0,length-1) + "\u002b");
-
-                }
-                else {
-                    input.setText(input.getText().toString() + "\u002b");
-                    secondVal="";
-                    if (operatorCount!=0){
-                        firstVal = Float.toString(result);
-                    }
-                    operatorCount+=1;
-                }
             }
         });
         subtract.setOnClickListener(new View.OnClickListener() {
@@ -120,18 +188,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 operator="s";
-                if(input.getText().toString().matches(".*[\\u002b\\u2212\\u00d7\\u00f7]$")) {
-                    int length=input.getText().toString().length();
-                    input.setText(input.getText().toString().substring(0,length-1) + "\u2212");
-                }
-                else {
-                    input.setText(input.getText().toString() + "\u2212");
-                    secondVal="";
-                    if (operatorCount!=0){
-                        firstVal = Float.toString(result);
-                    }
-                    operatorCount+=1;
-                }
+                arithmeticOperator(operator);
 
             }
         });
@@ -139,18 +196,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 operator="m";
-                if(input.getText().toString().matches(".*[\\u002b\\u2212\\u00d7\\u00f7]$")) {
-                    int length=input.getText().toString().length();
-                    input.setText(input.getText().toString().substring(0,length-1) + "\u00d7");
-                }
-                else {
-                    input.setText(input.getText().toString() + "\u00d7");
-                    secondVal="";
-                    if (operatorCount!=0){
-                        firstVal = Float.toString(result);
-                    }
-                    operatorCount+=1;
-                }
+                arithmeticOperator(operator);
 
             }
         });
@@ -158,18 +204,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 operator="d";
-                if(input.getText().toString().matches(".*[\\u002b\\u2212\\u00d7\\u00f7]$")) {
-                    int length=input.getText().toString().length();
-                    input.setText(input.getText().toString().substring(0,length-1) + "\u00f7");
-                }
-                else {
-                    input.setText(input.getText().toString() + "\u00f7");
-                    secondVal="";
-                    if (operatorCount!=0){
-                        firstVal = Float.toString(result);
-                    }
-                    operatorCount+=1;
-                }
+                arithmeticOperator(operator);
 
             }
         });
@@ -178,21 +213,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 operator="p";
-                if(input.getText().toString().endsWith("+")) {
-                }
-                else {
-                    if (secondVal != "") {
-                        result = Float.parseFloat(firstVal) % Float.parseFloat(secondVal);
-                        answer.setText("=" + Float.toString(result));
-                        input.setText(input.getText().toString() + "%");
-                        firstVal = Float.toString(result);
-                        secondVal = "";
-                    }
-                    else {
-                        input.setText(input.getText().toString() + "%");
-
-                    }
-                }
 
             }
         }); */
@@ -202,29 +222,43 @@ public class MainActivity extends AppCompatActivity {
 
                 input.setText(null);
                 answer.setText("0");
-                firstVal="0";
-                secondVal="";
+                firstVal.setLength(0);firstVal.append("0");
+                secondVal.setLength(0);
                 operator="";
                 operatorCount=0;
                 enter=false;
                 result=0;
             }
         });
-        /*
+
+        //Backspace button
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float result;
-                answer=Float.parseFloat(answer.getEditableText())
-                if (operator.equals("a"){
-                    answer=answer+
+
+                int length=getString(answer).length();
+                if (length>2){
+
+                    if(!secondVal.toString().equals("")){
+
+                        secondVal.setLength(secondVal.length()-1);
+                        equals.performClick();
+                    }
+                    else if(!firstVal.toString().equals("")){
+
+                        firstVal.setLength(firstVal.length()-1);
+                        equals.performClick();
+                    }
+				    else{
+                        clear.performClick();
+                    }
+                }
+                else{
+                    clear.performClick();
                 }
 
-                answer.setText(answer.getEditableText()+"/");
-
-
             }
-        }); */
+        });
         equals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 else{
-                    if (!input.getText().toString().matches(".*[+\\-*/%]$") ) {
+                    if (!getString(input).matches(".*[+\\-*/%]$") ) {
 
                         result = operation(operator,firstVal,secondVal);
                         answer.setText("=" + Float.toString(result));
@@ -254,65 +288,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
-                if(!operator.equals("")){
-                    if (!secondVal.equals("0")) {
-                        secondVal += "0";
-                        input.setText(input.getText().toString()+"0");
-                    }
-                    else{
-                        secondVal="0";
-                        int length=input.getText().toString().length();
-                        input.setText(input.getText().toString().substring(0,length-1)+"0");
-                    }
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "0";
-                        input.setText(input.getText().toString() + "0");
-                    }
-                    else{
-                        firstVal="0";
-                        int length=input.getText().toString().length();
-                        input.setText(input.getText().toString().substring(0,length-1)+"0");
-                    }
-                    answer.setText(firstVal);
-                    enter = false;
-                }
-
+                setValue("0");
             }
         });
         one.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="1";
-                    input.setText(input.getText().toString()+"1");
-
-                    result = operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "1";
-                    }
-                    else{
-                        firstVal="1";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "1");
-                    enter = false;
-                }
+            setValue("1");
 
             }
         });
@@ -320,27 +303,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="2";
-                    input.setText(input.getText().toString()+"2");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "2";
-                    }
-                    else{
-                        firstVal="2";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "2");
-                    enter = false;
-                }
+                setValue("2");
 
             }
         });
@@ -348,27 +311,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="3";
-                    input.setText(input.getText().toString()+"3");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "3";
-                    }
-                    else{
-                        firstVal="3";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "3");
-                    enter = false;
-                }
+                setValue("3");
 
             }
         });
@@ -376,27 +319,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="4";
-                    input.setText(input.getText().toString()+"4");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "4";
-                    }
-                    else{
-                        firstVal="4";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "4");
-                    enter = false;
-                }
+                setValue("4");
 
             }
         });
@@ -404,27 +327,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="5";
-                    input.setText(input.getText().toString()+"5");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "5";
-                    }
-                    else{
-                        firstVal="5";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "5");
-                    enter = false;
-                }
+                setValue("5");
 
             }
         });
@@ -432,27 +335,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="6";
-                    input.setText(input.getText().toString()+"6");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "6";
-                    }
-                    else{
-                        firstVal="6";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString() + "6");
-                    enter = false;
-                }
+                setValue("6");
 
             }
         });
@@ -460,27 +343,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="7";
-                    input.setText(input.getText().toString()+"7");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "7";
-                    }
-                    else{
-                        firstVal="7";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString()+"7");
-                    enter=false;
-                }
+                setValue("7");
 
             }
         });
@@ -488,27 +351,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="8";
-                    input.setText(input.getText().toString()+"8");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "8";
-                    }
-                    else{
-                        firstVal="8";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString()+"8");
-                    enter=false;
-                }
+                setValue("8");
 
             }
         });
@@ -516,51 +359,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+="9";
-                    input.setText(input.getText().toString()+"9");
-
-                    result=operation(operator,firstVal,secondVal);
-                    answer.setText("=" + Float.toString(result));
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    if (!firstVal.equals("0")) {
-                        firstVal += "9";
-                    }
-                    else{
-                        firstVal="9";
-                    }
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString()+"9");
-                    enter=false;
-                }
+                setValue("9");
 
             }
         });
-        /*
+
         point.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(!operator.equals("")){
-                    secondVal+=".";
-                    input.setText(input.getText().toString()+".");
-                }
-                else {
-                    if (enter){
-                        clear.performClick();
-                    }
-                    firstVal+=".";
-                    answer.setText(firstVal);
-                    input.setText(input.getText().toString()+".");
-                    enter=false;
-                }
+                setValue(".");
 
             }
-        });  */
+        });
 
     }
 }
