@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     Button clear, delete,equals;
     Button zero, one, two, three, four, five, six, seven, eight, nine, point, more;
 
-    //to decide what operation is to be performed
+    //Variables which helps to decide what operation is to be performed
     int operatorCount=0;
     String operator="";
     StringBuilder firstVal=new StringBuilder("0");
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     boolean enter=false;
     float result=0;
     
-    //Getting string values from input and answer TextView
+    //Getting string values in input and answer TextView
     public String getString(TextView tv){
         return tv.getText().toString();
     }
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public float operation(String operator, StringBuilder firstVal, StringBuilder secondVal){
         try{
             switch (operator) {
+				//returns evaluation based on the operator button clicked by user
                 case "a":
                     return (Float.parseFloat(firstVal.toString()) + Float.parseFloat(secondVal.toString()));
                 case "s":
@@ -47,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 case "d":
                     return (Float.parseFloat(firstVal.toString()) / Float.parseFloat(secondVal.toString()));
                 default:
+					//If only firstVal is present then returns firstVal
                     return Float.parseFloat(firstVal.toString());
             }
         }
         catch (Exception e){
+			//Even in case of any exceptions returns firstVal as its defaultvalue is 0
             return Float.parseFloat(firstVal.toString());
         }
 
@@ -59,43 +62,59 @@ public class MainActivity extends AppCompatActivity {
 
     //Setter function to set value 0,1,2...based on respective button
     public void setValue(String val){
-
+		//When operator is set, user clicked value is entered in secondVal variable
         if(!operator.equals("")){
-            if (!secondVal.toString().equals("0")) {
-                secondVal.append(val);
-                input.setText(getString(input)+val);
-            }
-            else{
-                secondVal.setLength(0);
-                secondVal.append(val);
-                int length=getString(input).length();
-                input.setText(getString(input).substring(0,length-1)+val);
-            }
-
-            result=operation(operator,firstVal,secondVal);
-            answer.setText("=" + Float.toString(result));
+			//Handle point
+			if((secondVal.indexOf(".")>-1) && val.equals(".")){
+			}
+			else{
+				
+				//If variable is equal to zero, replace it by clicked value or concat in it
+				if (!secondVal.toString().equals("0")) {
+					secondVal.append(val);
+					input.setText(getString(input)+val);
+				}
+				else{
+					secondVal.setLength(0);
+					secondVal.append(val);
+					int length=getString(input).length();
+					input.setText(getString(input).substring(0,length-1)+val);
+				}
+				//Also evaluate result as the user clicks a value and display it
+				result=operation(operator,firstVal,secondVal);
+				answer.setText("=" + Float.toString(result));
+			}
         }
+		//Else value is added in firstVal variable
         else {
             if (enter){
+				//If enter is clicked set all value to default
                 clear.performClick();
             }
-            if (!firstVal.toString().equals("0")) {
-                firstVal.append(val);
-                input.setText(getString(input) + val);
-            }
-            else{
-                firstVal.setLength(0);
-                firstVal.append(val);
-                int length=getString(input).length();
-                if(length>0){
-                    input.setText(getString(input).substring(0,length-1)+val);
-                }
-                else{
-                    input.setText(val);
-                }
-            }
-            answer.setText("="+firstVal.toString());
-            enter = false;
+			if((firstVal.indexOf(".")>-1) && val.equals(".")){
+			}
+			else{
+				
+				if (!firstVal.toString().equals("0")) {
+					firstVal.append(val);
+					input.setText(getString(input) + val);
+				}
+				else{
+					firstVal.setLength(0);
+					firstVal.append(val);
+					int length=getString(input).length();
+					//Condition to differentiate between first entere value and already having string in input
+					if(length>0){
+						input.setText(getString(input).substring(0,length-1)+val);
+					}
+					else{
+						input.setText(val);
+					}
+				}
+				//Set variable value on display
+				answer.setText("="+firstVal.toString());
+				enter = false;
+			}
         }
     }
 
@@ -126,7 +145,13 @@ public class MainActivity extends AppCompatActivity {
 
         }
         else {
-            input.setText(getString(input) + sign);
+            
+			if (!getString(input).equals(null)){
+				input.setText(getString(input)+sign);
+			}
+			else{
+				input.setText("0"+sign);
+			}
             secondVal.setLength(0);
             if (operatorCount!=0){
                 firstVal.setLength(0);
@@ -148,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        //Views binding to their Ids:
+        //Views and buttons binding to their Ids:
 
         input =findViewById(R.id.tVInput);
         answer =findViewById(R.id.tVAnswer);
@@ -172,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
         zero= findViewById(R.id.btZero);
         point= findViewById(R.id.btPoint);
         equals= findViewById(R.id.btEquals);
+
+        //Open activity with default values of each variables
+        clear.performClick();
 
 
         //Defining methods for all buttons
@@ -235,50 +263,49 @@ public class MainActivity extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+				
                 int length=getString(answer).length();
-                if (length>2){
-
+				//If answer contains only two or less charachter
+                if (length<3){
+					clear.performClick();
+				}
+				//Or if input endswith +,-,*,/
+				else if(getString(input).matches(".*[+\\-*/%]$")){
+					input.setText(getString(input).substring(0,length-1) );
+				}
+				//Else delete value from firstVal or secondVal and compute new result and display on answer
+				else{
+					input.setText(getString(input).substring(0,length-1) );
                     if(!secondVal.toString().equals("")){
 
                         secondVal.setLength(secondVal.length()-1);
                         equals.performClick();
                     }
-                    else if(!firstVal.toString().equals("")){
+                    else{
 
                         firstVal.setLength(firstVal.length()-1);
                         equals.performClick();
-                    }
-				    else{
-                        clear.performClick();
-                    }
+                    }   
                 }
-                else{
-                    clear.performClick();
-                }
-
+                
             }
         });
         equals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (enter){
-
+					//If user already clicks enter and didnot entered anything then do nothing
                 }
                 else{
+					result = operation(operator,firstVal,secondVal);
+                    answer.setText("=" + Float.toString(result));
                     if (!getString(input).matches(".*[+\\-*/%]$") ) {
-
-                        result = operation(operator,firstVal,secondVal);
-                        answer.setText("=" + Float.toString(result));
-                        operator="";
+						//If both values anr given with operator in between then reset operartor and set enter
+						operator="";
                         enter=true;
                         //result=0;
                     }
-                    else {
-                        result = operation(operator,firstVal,secondVal);
-                        answer.setText("=" + Float.toString(result));
-
-                    }
+                    
 
                 }
 
