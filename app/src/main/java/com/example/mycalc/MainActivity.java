@@ -260,33 +260,58 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Backspace button
-        delete.setOnClickListener(new View.OnClickListener() {
+       delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-				
-                int length=getString(answer).length();
-				//If answer contains only two or less charachter
-                if (length<3){
-					clear.performClick();
-				}
-				//Or if input endswith +,-,*,/
-				else if(getString(input).matches(".*[+\\-*/%]$")){
-					input.setText(getString(input).substring(0,length-1) );
-				}
-				//Else delete value from firstVal or secondVal and compute new result and display on answer
-				else{
-					input.setText(getString(input).substring(0,length-1) );
-                    if(!secondVal.toString().equals("")){
-
-                        secondVal.setLength(secondVal.length()-1);
-                        equals.performClick();
+                String str = input.getText().toString(); //take input value from TextView
+                //if length of input greater than 1 than its go in if condition
+                if (str.length() >1 ) {
+                    str = str.substring(0, str.length() - 1); // remove last 1 element from str
+                    input.setText(str);                       //and set it into input
+                   // Log.i(str + "     ","");
+                    if(!secondVal.toString().equals("")){       //secondValue is not null
+                        String value = secondVal.toString();
+                        value = value.substring(0, value.length() - 1); // remove last 1 element from second value
+                        secondVal = new StringBuilder(value);
+                    }else if(!operator.toString().equals("")){    // operator is not null
+                        operator = "";
+                    }else{
+                        String value = firstVal.toString();
+                        value = value.substring(0, value.length() - 1);  // remove last 1 element from first value
+                        firstVal = new StringBuilder(value);
                     }
-                    else{
 
-                        firstVal.setLength(firstVal.length()-1);
-                        equals.performClick();
-                    }   
+                    result=operation(operator,firstVal,secondVal);    // perform operation and result
+                    answer.setText("=" + Float.toString(result));     // set result in anwer TextView
                 }
+                else if (str.length() <=1 ) {
+                    input.setText("0");
+                    answer.setText("0");
+                }
+//                int length=getString(answer).length();
+//                Log.i(String.valueOf(length)+"   ", getString(answer));
+//				//If answer contains only two or less charachter
+//                if (length<3){
+//					clear.performClick();
+//				}
+//				//Or if input endswith +,-,*,/
+//				else if(getString(input).matches(".*[+\\-*/%]$")){
+//					input.setText(getString(input).substring(0,length-1) );
+//				}
+//				//Else delete value from firstVal or secondVal and compute new result and display on answer
+//				else{
+//					input.setText(getString(input).substring(0,length-1) );
+//                    if(!secondVal.toString().equals("")){
+//
+//                        secondVal.setLength(secondVal.length()-1);
+//                        equals.performClick();
+//                    }
+//                    else{
+//
+//                        firstVal.setLength(firstVal.length()-1);
+//                        equals.performClick();
+//                    }
+//                }
                 
             }
         });
