@@ -59,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/clear"
+                android:onClick="clear"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -70,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/delete"
+                android:onClick="delete"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -81,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/percentage"
+                android:onClick="percent"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -92,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/divide"
+                android:onClick="operators"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -112,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/seven"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -123,6 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/eight"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -134,6 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/nine"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -145,6 +152,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/multiply"
+                android:onClick="operators"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -165,6 +173,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/four"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -176,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/five"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -187,6 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/six"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -198,6 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/minus"
+                android:onClick="operators"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -218,6 +230,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/one"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -229,6 +242,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/two"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -240,6 +254,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/three"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -251,6 +266,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/plus"
+                android:onClick="operators"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -283,6 +299,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/zero"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -294,6 +311,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/point"
+                android:onClick="setValue"
                 android:textColor="#0C0C0C"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -305,6 +323,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/equals"
+                android:onClick="equals"
                 android:textColor="#F1450E"
                 android:textSize="30sp"
                 android:textStyle="bold" />
