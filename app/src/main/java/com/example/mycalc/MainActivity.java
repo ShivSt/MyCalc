@@ -51,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
         //Views and buttons binding to their Ids:
         input = findViewById(R.id.tVInput);
         answer = findViewById(R.id.tVAnswer);
-
     }
-
 
     public void operators(@NotNull View view) {
         dp.setStringFromView(getStringFromView(input),getStringFromView(answer));
