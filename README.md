@@ -1,0 +1,3 @@
+# MyCalc
+This is an attempt to create a fully functional calculator for android system. Starting my way to android app development.
+I request developer community help me in this project,waiting for your help .....
