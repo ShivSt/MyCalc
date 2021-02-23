@@ -2,6 +2,8 @@ package com.example.mycalc;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Stack;
+
 enum operator{ADD, SUBTRACT, MULTIPLY, DIVIDE, BLANK }
 class DataOperation {
 
@@ -27,29 +29,96 @@ class DataOperation {
         answer.replace(0,answer.length(),answerString);
     }
 
-    //Operation based on operator:
-    private float operation(operator op, StringBuilder firstVal, StringBuilder secondVal){
+    //Evaluate input string according to BODMAS
+    private float evaluate(String input){
         try{
-            switch (op) {
-                //returns evaluation based on the operator button clicked by user
-                case ADD:
-                    return (Float.parseFloat(firstVal.toString()) + Float.parseFloat(secondVal.toString()));
-                case SUBTRACT:
-                    return (Float.parseFloat(firstVal.toString()) - Float.parseFloat(secondVal.toString()));
-                case MULTIPLY:
-                    return (Float.parseFloat(firstVal.toString()) * Float.parseFloat(secondVal.toString()));
-                case DIVIDE:
-                    return (Float.parseFloat(firstVal.toString())/Float.parseFloat(secondVal.toString()));
-                default:
-                    //If only firstVal is present then returns firstVal
-                    return Float.parseFloat(firstVal.toString());
+            Stack<Float> numberStack = new Stack<Float>();
+            Stack<operator> operatorStack = new Stack<operator>();
+            for(int i = 0; i < input.length(); i++){
+                try{
+                    int number = parseNumber(input, i);
+                    numberStack.push((float)number);
+                    i += Integer.toString(number).length();
+                    if(i >= input.length()){
+                        break;
+                    }
+
+                    operator op = parseOperator(input, i);
+                    collapseTop(numberStack, operatorStack, op);
+                    operatorStack.push(op);
+                } catch(NumberFormatException ex){
+                    return Integer.MIN_VALUE;
+                }
             }
+            collapseTop(numberStack, operatorStack, operator.BLANK);
+            if(numberStack.size() == 1 && operatorStack.size() == 0){
+                return numberStack.pop();
+            }
+            return 0;
         }
         catch (Exception e){
             //Even in case of any exceptions returns firstVal as its default value is 0
             return Float.parseFloat(firstVal.toString());
         }
 
+    }
+
+    private void collapseTop(Stack<Float> numberStack, Stack<operator> operatorStack, operator futureTop){
+        while(numberStack.size() >= 2 && operatorStack.size() >= 1){
+            if(priorityOfOperator(futureTop) <= priorityOfOperator(operatorStack.peek())){
+                float second = numberStack.pop();
+                float first = numberStack.pop();
+                operator op = operatorStack.pop();
+                float result = applyOp(first, op, second);
+                numberStack.push(result);
+            } else{
+                break;
+            }
+        }
+    }
+
+    private float applyOp(float left, operator op, float right){
+        switch (op){
+            case ADD: return left + right;
+            case SUBTRACT: return left - right;
+            case MULTIPLY: return left * right;
+            case DIVIDE: return left / right;
+            default: return right;
+        }
+
+    }
+
+    private int priorityOfOperator(operator op){
+        switch (op){
+            case ADD: return 1;
+            case SUBTRACT: return 1;
+            case MULTIPLY: return 2;
+            case DIVIDE: return 2;
+            case BLANK: return 0;
+        }
+        return 0;
+    }
+
+    private int parseNumber(String sequence, int offset){
+        StringBuilder sb = new StringBuilder();
+        while(offset < sequence.length() && Character.isDigit(sequence.charAt(offset))){
+            sb.append(sequence.charAt(offset));
+            offset++;
+        }
+        return Integer.parseInt(sb.toString());
+    }
+
+    private operator parseOperator(String sequence, int offset){
+        if(offset < sequence.length()){
+            char op = sequence.charAt(offset);
+            switch (op){
+                case '\u002b': return operator.ADD;
+                case '\u2212': return operator.SUBTRACT;
+                case '\u00d7': return operator.MULTIPLY;
+                case '\u00f7': return operator.DIVIDE;
+            }
+        }
+        return operator.BLANK;
     }
 
     void arithmeticOperator(@org.jetbrains.annotations.NotNull operator op){
@@ -125,7 +194,7 @@ class DataOperation {
                 value = value.substring(0, value.length() - 1);  // remove last 1 element from first value
                 firstVal = new StringBuilder(value);
             }
-                result=operation(MainActivity.op,firstVal,secondVal);    // perform operation and result
+                result=evaluate(input.toString()); // evaluate result
                 answer = new StringBuilder("=" + Float.toString(result));     // set result in anwer TextView
             }
         else if (str.length() <=1 ) {
@@ -139,7 +208,7 @@ class DataOperation {
             //If user already clicks enter and did not entered anything then do nothing
         }
         else{
-            result = operation(MainActivity.op,firstVal,secondVal);
+            result = evaluate(input.toString());
             answer.setLength(0);
             answer.append(String.format("=%s", result));
             if (!getStringFromView(input).matches(".*[+\\-*/%]$") ) {
@@ -178,7 +247,7 @@ class DataOperation {
                     input.replace(0,input.length(),String.format("%s%s", getStringFromView(input).substring(0, length - 1), val));
                 }
                 //Also evaluate result as the user clicks a value and display it
-                result=operation(MainActivity.op,firstVal,secondVal);
+                result = evaluate(input.toString());
                 answer.replace(0,answer.length(),String.format("=%s", result));
             }
         }
@@ -213,5 +282,9 @@ class DataOperation {
                 enter = false;
             }
         }
+    }
+
+    private float returnValueFromStack(StringBuilder firstVal,StringBuilder secondVal){
+        return 0f;
     }
 }
