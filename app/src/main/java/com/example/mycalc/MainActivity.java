@@ -71,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btDivide:
                 op= operator.DIVIDE;
                 dp.arithmeticOperator(op);
+            case R.id.btPercent:
+                op= operator.PERCENT;
+                dp.arithmeticOperator(op);
             default:
                 op= operator.BLANK;
                 break;

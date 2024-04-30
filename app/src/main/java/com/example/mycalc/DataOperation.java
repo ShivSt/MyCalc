@@ -40,6 +40,10 @@ class DataOperation {
                     return (Float.parseFloat(firstVal.toString()) * Float.parseFloat(secondVal.toString()));
                 case DIVIDE:
                     return (Float.parseFloat(firstVal.toString())/Float.parseFloat(secondVal.toString()));
+                case PERCENT:
+                    Float percent;
+                    percent = Float.parseFloat(secondVal.toString()) / Float.parseFloat( Float.toString(Float.parseFloat("100")));
+                    return (Float.parseFloat(firstVal.toString()) * (percent).floatValue());
                 default:
                     //If only firstVal is present then returns firstVal
                     return Float.parseFloat(firstVal.toString());
